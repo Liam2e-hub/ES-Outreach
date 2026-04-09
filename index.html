@@ -36,6 +36,44 @@
     line-height: 1.6;
   }
 
+  /* ── Password gate ── */
+  #password-gate {
+    position: fixed;
+    inset: 0;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  #password-gate.hidden { display: none; }
+  .gate-box {
+    width: 100%;
+    max-width: 360px;
+    padding: 40px 32px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .gate-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .gate-title { font-size: 17px; font-weight: 500; }
+  .gate-sub { font-size: 13px; color: var(--muted); margin-top: -12px; }
+  .gate-box input[type="password"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-family: inherit;
+    background: var(--surface);
+    outline: none;
+  }
+  .gate-box input[type="password"]:focus { border-color: var(--border-dark); }
+  .gate-error { font-size: 13px; color: var(--error); display: none; }
+  .gate-error.visible { display: block; }
+
   header {
     border-bottom: 1px solid var(--border);
     padding: 20px 32px;
@@ -378,6 +416,20 @@
 </head>
 <body>
 
+<div id="password-gate">
+  <div class="gate-box">
+    <div class="gate-logo">
+      <div class="logo-mark">ES</div>
+      <span class="logo-text">Outreach Generator</span>
+    </div>
+    <p class="gate-title">Enter password to continue</p>
+    <p class="gate-sub">This tool is for internal use only.</p>
+    <input type="password" id="gate-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPassword()">
+    <button class="btn-primary" onclick="checkPassword()">Unlock</button>
+    <p class="gate-error" id="gate-error">Incorrect password. Please try again.</p>
+  </div>
+</div>
+
 <header>
   <div class="logo">
     <div class="logo-mark">ES</div>
@@ -514,6 +566,23 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  // ── Password gate ────────────────────────────────────────────────────────
+  const GATE_KEY = 'es_auth';
+  if (sessionStorage.getItem(GATE_KEY) === '1') {
+    document.getElementById('password-gate').classList.add('hidden');
+  }
+  function checkPassword() {
+    const val = document.getElementById('gate-input').value;
+    if (val === 'es-outreach-2026') {
+      sessionStorage.setItem(GATE_KEY, '1');
+      document.getElementById('password-gate').classList.add('hidden');
+    } else {
+      document.getElementById('gate-error').classList.add('visible');
+      document.getElementById('gate-input').value = '';
+      document.getElementById('gate-input').focus();
+    }
+  }
+
   // ── Config ──────────────────────────────────────────────────────────────
   // Replace with your deployed Cloudflare Worker URL after setup
   const WORKER_URL = 'https://es-outreach.me-7b3.workers.dev';
