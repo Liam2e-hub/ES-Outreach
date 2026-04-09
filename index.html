@@ -650,7 +650,11 @@ Rules: under 150 words each. First person from Liam. Never use "passionate". Fee
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action, ...payload })
     });
-    if (!res.ok) throw new Error(`Worker error: ${res.status}`);
+    if (!res.ok) {
+      let detail = '';
+      try { detail = (await res.json()).error || ''; } catch { detail = await res.text(); }
+      throw new Error(`Worker error ${res.status}: ${detail}`);
+    }
     return res.json();
   }
 
