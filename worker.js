@@ -14,7 +14,7 @@
 
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 const NOTION_URL    = 'https://api.notion.com/v1/pages';
-const MODEL         = 'claude-sonnet-4-5-20251001';
+const MODEL         = 'claude-sonnet-4-5';
 
 export default {
   async fetch(request, env) {
