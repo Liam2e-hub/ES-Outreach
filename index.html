@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ES Outreach Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0e0e0e;
+    --white: #fafaf8;
+    --surface: #f4f3ef;
+    --border: #e2e0d9;
+    --border-dark: #c8c5bb;
+    --text: #1a1a18;
+    --muted: #7a7870;
+    --accent: #1a1a18;
+    --accent-light: #f0efe9;
+    --success: #1a6b3c;
+    --success-bg: #edf7f2;
+    --error: #9b2020;
+    --error-bg: #fdf0f0;
+    --radius: 6px;
+    --radius-lg: 10px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--black);
+    color: #fff;
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .header-meta {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .page-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+  }
+
+  .page-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 36px;
+  }
+
+  .section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+    margin-bottom: 16px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 560px) { .field-grid { grid-template-columns: 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+
+  .field label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .field input,
+  .field textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+
+  .field input:focus,
+  .field textarea:focus {
+    border-color: var(--border-dark);
+    background: var(--white);
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 70px;
+    line-height: 1.5;
+  }
+
+  .field-full { margin-bottom: 12px; }
+
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 4px;
+  }
+
+  .pill {
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.12s;
+    line-height: 1.4;
+    user-select: none;
+  }
+
+  .pill:hover { border-color: var(--border-dark); color: var(--text); }
+
+  .pill.on {
+    background: var(--black);
+    color: var(--white);
+    border-color: var(--black);
+  }
+
+  .hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+    font-style: italic;
+    min-height: 18px;
+    transition: opacity 0.2s;
+  }
+
+  .sub-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 14px 0 8px;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 16px 0;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .btn-primary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 13px 24px;
+    background: var(--black);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: opacity 0.15s;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-secondary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 11px 24px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .btn-secondary:hover { border-color: var(--border-dark); }
+  .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--black);
+    color: var(--white);
+    font-size: 13px;
+    padding: 11px 20px;
+    border-radius: var(--radius);
+    opacity: 0;
+    transition: all 0.25s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 100;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .toast.success { background: var(--success); }
+  .toast.error { background: var(--error); }
+
+  .output-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+    margin-top: 24px;
+    display: none;
+  }
+
+  .output-block.visible { display: block; }
+
+  .output-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .email-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 12px;
+  }
+
+  .email-card:last-child { margin-bottom: 0; }
+
+  .email-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .email-num {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .email-timing {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--surface);
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+
+  .email-subject {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .email-body {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+
+  .output-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    display: inline-block;
+    margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">ES</div>
+    <span class="logo-text">Outreach Generator</span>
+  </div>
+  <span class="header-meta"><span class="status-dot"></span>Connected to Notion</span>
+</header>
+
+<main>
+  <h1 class="page-title">New outreach sequence</h1>
+  <p class="page-sub">Fill in the lead details, pick your angle, and generate a personalised 3-email sequence. Leads are automatically logged to Notion.</p>
+
+  <!-- Lead Details -->
+  <div class="section">
+    <p class="section-label">Lead details</p>
+    <div class="field-grid">
+      <div class="field"><label>First name *</label><input type="text" id="lead_name" placeholder="e.g. Sarah"></div>
+      <div class="field"><label>Business name *</label><input type="text" id="biz_name" placeholder="e.g. Apex Group"></div>
+      <div class="field"><label>Role / title</label><input type="text" id="lead_role" placeholder="e.g. Marketing Manager"></div>
+      <div class="field"><label>Email</label><input type="email" id="lead_email" placeholder="sarah@apexgroup.com.au"></div>
+      <div class="field"><label>Industry</label><input type="text" id="industry" placeholder="e.g. Construction"></div>
+      <div class="field"><label>Website / LinkedIn URL</label><input type="text" id="lead_url" placeholder="https://..."></div>
+    </div>
+    <div class="field-full field">
+      <label>How you know them / connection context</label>
+      <textarea id="context" placeholder="e.g. Met at Brisbane MKTG Meetup last month. David has worked with their previous company, Buildcorp."></textarea>
+    </div>
+    <div class="field-full field">
+      <label>Known pain point or opportunity</label>
+      <textarea id="pain" placeholder="e.g. Upcoming rebrand, scaling social output, stretched internal creative team, new product launch."></textarea>
+    </div>
+  </div>
+
+  <!-- Targeting -->
+  <div class="section">
+    <p class="section-label">Target profile</p>
+
+    <p class="sub-label">Lead type</p>
+    <div class="pills" id="lead_type">
+      <div class="pill on" data-val="warm">Warm — met or referred</div>
+      <div class="pill" data-val="cold">Cold — no prior contact</div>
+      <div class="pill" data-val="lapsed">Lapsed — past contact</div>
+    </div>
+    <p class="hint" id="hint_lead_type">Warm: reference your connection or David's existing relationship with the business.</p>
+
+    <hr class="divider">
+
+    <p class="sub-label">Brand type</p>
+    <div class="pills" id="brand_type">
+      <div class="pill on" data-val="Corporate / Enterprise">Corporate / Enterprise</div>
+      <div class="pill" data-val="Mid-Market Brand">Mid-Market Brand</div>
+      <div class="pill" data-val="Marketing Agency">Marketing Agency</div>
+      <div class="pill" data-val="Government / NFP">Government / NFP</div>
+      <div class="pill" data-val="Startup / Scaleup">Startup / Scaleup</div>
+      <div class="pill" data-val="Professional Services">Professional Services</div>
+    </div>
+    <p class="hint" id="hint_brand_type">Enterprise: leads with Isuzu, ART, Telstra-style scale. Use Go1 or Sprout case studies.</p>
+
+    <hr class="divider">
+
+    <p class="sub-label">Company size</p>
+    <div class="pills" id="co_size">
+      <div class="pill" data-val="Small — under 20">Small — under 20</div>
+      <div class="pill" data-val="Medium — 20–200">Medium — 20–200</div>
+      <div class="pill on" data-val="Large — 200+">Large — 200+</div>
+      <div class="pill" data-val="Enterprise — 1000+">Enterprise — 1000+</div>
+    </div>
+    <p class="hint" id="hint_co_size">Large: emphasise scale, offshore model, and cross-team integration capability.</p>
+  </div>
+
+  <!-- Angle -->
+  <div class="section">
+    <p class="section-label">Positioning angle</p>
+
+    <p class="sub-label">Primary hook</p>
+    <div class="pills" id="hook">
+      <div class="pill on" data-val="Embedded team">Embedded team</div>
+      <div class="pill" data-val="Execution gap">Execution gap</div>
+      <div class="pill" data-val="Scale without hiring">Scale without hiring</div>
+      <div class="pill" data-val="Large project specialist">Large project specialist</div>
+      <div class="pill" data-val="Offshore model">Offshore model</div>
+    </div>
+
+    <hr class="divider">
+
+    <p class="sub-label">Opening move</p>
+    <div class="pills" id="opener">
+      <div class="pill on" data-val="reference the connection">Reference the connection</div>
+      <div class="pill" data-val="lead with a sharp question">Lead with a question</div>
+      <div class="pill" data-val="lead with a relevant insight">Lead with insight</div>
+      <div class="pill" data-val="lead with a client result">Lead with a result</div>
+    </div>
+
+    <hr class="divider">
+
+    <p class="sub-label">Tone</p>
+    <div class="pills" id="tone">
+      <div class="pill on" data-val="strategic and consultative">Strategic & consultative</div>
+      <div class="pill" data-val="warm and direct">Warm & direct</div>
+      <div class="pill" data-val="concise and confident">Concise & confident</div>
+    </div>
+  </div>
+
+  <!-- Case Study -->
+  <div class="section">
+    <p class="section-label">Case study reference (optional)</p>
+    <div class="pills" id="case_study">
+      <div class="pill" data-val="Sprout/Telstra brand rollout (2000+ assets, ongoing BAU)">Sprout / Telstra</div>
+      <div class="pill" data-val="Go1 rebrand (resource scaling, team extension)">Go1 rebrand</div>
+      <div class="pill" data-val="UnitingCare brand transformation (on time, on budget)">UnitingCare</div>
+      <div class="pill" data-val="Cross River Rail campaign and OOH production">Cross River Rail</div>
+      <div class="pill" data-val="Heritage/People First Bank rebrand and digital forms">Heritage Bank</div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button class="btn-secondary" id="btn_research" onclick="handleResearch()">Research this lead first</button>
+    <button class="btn-primary" id="btn_generate" onclick="handleGenerate()">Generate sequence + log to Notion</button>
+  </div>
+
+  <!-- Output -->
+  <div class="output-block" id="output_block">
+    <p class="output-label">Generated sequence</p>
+    <div id="emails_container"></div>
+    <div class="output-actions">
+      <button class="btn-secondary" onclick="copyAll()">Copy all emails</button>
+      <button class="btn-secondary" onclick="resetForm()">New lead</button>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── Config ──────────────────────────────────────────────────────────────
+  // Replace with your deployed Cloudflare Worker URL after setup
+  const WORKER_URL = 'https://es-outreach.YOUR-SUBDOMAIN.workers.dev';
+
+  // ── Pill logic ──────────────────────────────────────────────────────────
+  const hints = {
+    lead_type: {
+      warm: 'Warm: reference your connection or David\'s existing relationship with the business.',
+      cold: 'Cold: don\'t invent a connection — lead with insight, a question, or a relevant result.',
+      lapsed: 'Lapsed: acknowledge the gap warmly and re-establish relevance.'
+    },
+    brand_type: {
+      'Corporate / Enterprise': 'Enterprise: proven at Isuzu, ART, Telstra scale. Reference Go1 or Sprout.',
+      'Mid-Market Brand': 'Mid-market: quality without agency overhead — flexible and scaleable.',
+      'Marketing Agency': 'Agency: production partner to help them deliver more for their own clients.',
+      'Government / NFP': 'Gov/NFP: accountability, transparency, track record with Cross River Rail and UnitingCare.',
+      'Startup / Scaleup': 'Startup: speed and flexibility — scale creative without adding headcount.',
+      'Professional Services': 'Professional services: brand, reports, templates, and digital assets at volume.'
+    },
+    co_size: {
+      'Small — under 20': 'Small: big-studio quality without the cost. Fixed price or small retainer.',
+      'Medium — 20–200': 'Medium: they have strategy but need production capacity to match.',
+      'Large — 200+': 'Large: emphasise scale, offshore model, and cross-team integration capability.',
+      'Enterprise — 1000+': 'Enterprise: dedicated resource model, onshore PM, proven at ART/Telstra scale.'
+    }
+  };
+
+  function setupPills(rowId, hintId, hintMap, multi = false) {
+    document.querySelectorAll(`#${rowId} .pill`).forEach(p => {
+      p.addEventListener('click', () => {
+        if (!multi) document.querySelectorAll(`#${rowId} .pill`).forEach(x => x.classList.remove('on'));
+        p.classList.toggle('on');
+        if (hintId && hintMap) {
+          const active = document.querySelector(`#${rowId} .pill.on`);
+          const el = document.getElementById(hintId);
+          if (el) el.textContent = active && hintMap[active.dataset.val] ? hintMap[active.dataset.val] : '';
+        }
+      });
+    });
+  }
+
+  setupPills('lead_type', 'hint_lead_type', hints.lead_type);
+  setupPills('brand_type', 'hint_brand_type', hints.brand_type);
+  setupPills('co_size', 'hint_co_size', hints.co_size);
+  setupPills('hook');
+  setupPills('opener');
+  setupPills('tone');
+  setupPills('case_study', null, null, true);
+
+  // ── Helpers ─────────────────────────────────────────────────────────────
+  const v = id => (document.getElementById(id) || {}).value?.trim() || '';
+  const active = rowId => document.querySelector(`#${rowId} .pill.on`)?.dataset.val || '';
+  const allActive = rowId => [...document.querySelectorAll(`#${rowId} .pill.on`)].map(p => p.dataset.val);
+
+  function toast(msg, type = '') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = `toast ${type} show`;
+    setTimeout(() => el.classList.remove('show'), 3200);
+  }
+
+  function setLoading(btnId, loading, label) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.innerHTML = loading ? `<span class="spinner"></span>${label}` : label;
+  }
+
+  // ── Collect form data ────────────────────────────────────────────────────
+  function getFormData() {
+    return {
+      name: v('lead_name'),
+      business: v('biz_name'),
+      role: v('lead_role'),
+      email: v('lead_email'),
+      industry: v('industry'),
+      website: v('lead_url'),
+      context: v('context'),
+      pain: v('pain'),
+      leadType: active('lead_type'),
+      brandType: active('brand_type'),
+      companySize: active('co_size'),
+      hook: active('hook'),
+      opener: active('opener'),
+      tone: active('tone'),
+      caseStudies: allActive('case_study')
+    };
+  }
+
+  // ── Build the Claude prompt ──────────────────────────────────────────────
+  function buildPrompt(d) {
+    const caseRef = d.caseStudies.length
+      ? `\n- Relevant ES case study to reference: ${d.caseStudies.join(', ')}`
+      : '';
+    return `Generate a 3-email outreach sequence for Expressway Studio.
+
+SENDER: Liam Toohey, Digital Project Manager / BDM, Expressway Studio (expresswaystudio.com.au)
+Expressway Studio is a Brisbane-based full-service creative production studio. We embed into client teams to facilitate large, complex projects across brand & creative, video production, social content, and digital. Our unique onshore–offshore model (owned team in Clark, Philippines via Accelerate Outsourcing) delivers high-quality creative at scale. Key clients include Telstra/Sprout, Go1, UnitingCare, Australian Retirement Trust, KFC, Isuzu, Cross River Rail.
+David Jones is Founder & Director — reference him where relevant for credibility.
+
+LEAD:
+- Name: ${d.name || '[Name]'}
+- Business: ${d.business || '[Business]'}${d.role ? '\n- Role: ' + d.role : ''}${d.industry ? '\n- Industry: ' + d.industry : ''}${d.context ? '\n- Connection context: ' + d.context : ''}${d.pain ? '\n- Pain point / opportunity: ' + d.pain : ''}
+
+TARGET PROFILE:
+- Lead type: ${d.leadType}
+- Brand type: ${d.brandType}
+- Company size: ${d.companySize}
+
+PARAMETERS:
+- Hook: ${d.hook}
+- Opening move: ${d.opener}
+- Tone: ${d.tone}
+- CTA: Book a video call (booking link is in Liam's email signature)${caseRef}
+
+SEQUENCE:
+Email 1 (Day 1): Warm open — establish/re-establish connection, open the door, no hard ask
+Email 2 (Day 5–7): Value delivery — specific insight or result, connect to their challenge, position ES
+Email 3 (Day 12–14): Soft close — make it easy to say yes, clear CTA
+
+FORMAT — for each email output exactly:
+Subject line: [subject]
+Send timing: [timing]
+Body:
+[body text]
+---
+
+Rules: under 150 words each. First person from Liam. Never use "passionate". Feels personally written, not templated. Strategic and consultative — not salesy.`;
+  }
+
+  // ── Call Cloudflare Worker ───────────────────────────────────────────────
+  async function callWorker(action, payload) {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, ...payload })
+    });
+    if (!res.ok) throw new Error(`Worker error: ${res.status}`);
+    return res.json();
+  }
+
+  // ── Parse Claude's output into email cards ───────────────────────────────
+  function parseEmails(text) {
+    const parts = text.split('---').map(s => s.trim()).filter(Boolean);
+    return parts.map((part, i) => {
+      const subjectMatch = part.match(/Subject line:\s*(.+)/i);
+      const timingMatch = part.match(/Send timing:\s*(.+)/i);
+      const bodyMatch = part.match(/Body:\s*([\s\S]+)/i);
+      return {
+        num: i + 1,
+        subject: subjectMatch ? subjectMatch[1].trim() : '',
+        timing: timingMatch ? timingMatch[1].trim() : '',
+        body: bodyMatch ? bodyMatch[1].trim() : part
+      };
+    });
+  }
+
+  function renderEmails(emails) {
+    const container = document.getElementById('emails_container');
+    container.innerHTML = emails.map(e => `
+      <div class="email-card">
+        <div class="email-meta">
+          <span class="email-num">Email ${e.num}</span>
+          <span class="email-timing">${e.timing}</span>
+        </div>
+        ${e.subject ? `<p class="email-subject">Subject: ${e.subject}</p>` : ''}
+        <p class="email-body">${e.body}</p>
+      </div>
+    `).join('');
+    document.getElementById('output_block').classList.add('visible');
+    document.getElementById('output_block').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ── Main generate handler ────────────────────────────────────────────────
+  async function handleGenerate() {
+    const d = getFormData();
+    if (!d.name || !d.business) {
+      toast('Please enter a name and business name', 'error');
+      return;
+    }
+
+    setLoading('btn_generate', true, 'Generating...');
+
+    try {
+      const prompt = buildPrompt(d);
+
+      // 1. Generate sequence via Worker → Claude
+      const genResult = await callWorker('generate', { prompt });
+      const emailText = genResult.text;
+      const emails = parseEmails(emailText);
+      renderEmails(emails);
+
+      // 2. Log lead to Notion via Worker
+      try {
+        await callWorker('log_lead', {
+          lead: {
+            name: d.name,
+            business: d.business,
+            role: d.role,
+            email: d.email,
+            industry: d.industry,
+            website: d.website,
+            context: d.context,
+            pain: d.pain,
+            leadType: d.leadType,
+            brandType: d.brandType,
+            companySize: d.companySize,
+            hook: d.hook,
+            caseStudies: d.caseStudies.join(', ')
+          }
+        });
+        toast('Sequence generated — lead logged to Notion', 'success');
+      } catch {
+        toast('Sequence generated — Notion log failed (check worker)', '');
+      }
+
+    } catch (err) {
+      toast('Something went wrong — check worker URL', 'error');
+      console.error(err);
+    } finally {
+      setLoading('btn_generate', false, 'Generate sequence + log to Notion');
+    }
+  }
+
+  // ── Research handler ─────────────────────────────────────────────────────
+  async function handleResearch() {
+    const d = getFormData();
+    if (!d.business && !d.website) {
+      toast('Add at least a business name or URL to research', 'error');
+      return;
+    }
+    setLoading('btn_research', true, 'Researching...');
+    try {
+      const prompt = `I'm preparing outreach for Expressway Studio (Brisbane creative production studio). Research this lead before I write the email.
+
+Lead: ${d.name || 'unknown'}, ${d.role || 'unknown role'} at ${d.business}${d.website ? '\nWebsite: ' + d.website : ''}
+
+Please search for:
+- What the business does and their positioning
+- Company size and recent news or campaigns
+- Their likely marketing/creative setup
+- Anything that gives me a genuine, specific reason to reach out
+
+Then recommend which Expressway Studio angle would land best (embedded team / execution gap / scale without hiring / large project specialist / offshore model), and why. Keep it concise — I'll generate the sequence next.`;
+
+      const result = await callWorker('research', { prompt });
+      const container = document.getElementById('emails_container');
+      container.innerHTML = `<div class="email-card"><p class="email-subject">Research findings</p><p class="email-body">${result.text.replace(/\n/g, '<br>')}</p></div>`;
+      document.getElementById('output_block').classList.add('visible');
+      document.getElementById('output_block').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      toast('Research complete — review and generate when ready');
+    } catch (err) {
+      toast('Research failed — check worker URL', 'error');
+    } finally {
+      setLoading('btn_research', false, 'Research this lead first');
+    }
+  }
+
+  // ── Copy all ─────────────────────────────────────────────────────────────
+  function copyAll() {
+    const cards = document.querySelectorAll('.email-card');
+    const text = [...cards].map((card, i) => {
+      const subject = card.querySelector('.email-subject')?.textContent || '';
+      const body = card.querySelector('.email-body')?.textContent || '';
+      const timing = card.querySelector('.email-timing')?.textContent || '';
+      return `--- Email ${i + 1} (${timing}) ---\n${subject}\n\n${body}`;
+    }).join('\n\n');
+    navigator.clipboard.writeText(text).then(() => toast('Copied to clipboard', 'success'));
+  }
+
+  function resetForm() {
+    document.getElementById('output_block').classList.remove('visible');
+    ['lead_name','biz_name','lead_role','lead_email','industry','lead_url','context','pain'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
